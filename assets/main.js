@@ -6,6 +6,7 @@ const audio = $('#audio')
 const cd = $('.cd')
 const btnPlay = $('.btn-toggle-play')
 const player = $('.player')
+const progress = $('#progress')
 
 
 const app = {
@@ -94,7 +95,7 @@ const app = {
         const _this = this;
         const cdWidth = cd.offsetWidth
 
-        // phóng to - thu nhỏ 
+        // zoom in - zoom out IMG
         document.onscroll = function() {
             const scrollTop = window.scrollY || document.documentElement.scrollTop
             const newCdWidth = cdWidth - scrollTop
@@ -105,22 +106,43 @@ const app = {
 
         // play - pause
         btnPlay.onclick = function() {
-            
-
             if (_this.isPlaying) {
                 audio.pause()
                 player.classList.remove('playing')
                 _this.isPlaying = false
+                cdthumbSpin.pause()
             } else {
                 audio.play()
                 player.classList.add('playing')
                 _this.isPlaying = true
+                cdthumbSpin.play()
             }
         }
+
+        // song progress
+        audio.ontimeupdate = function() {
+            if (audio.duration) {
+                const durationPercent = Math.floor(audio.currentTime / audio.duration * 100)
+                progress.value = durationPercent
+            }
+        }
+
+        // rewind song
+        progress.onchange = function(e) {
+            audio.currentTime = audio.duration / 100 * e.target.value
+        }
+
+        // cd spin - stop
+        const cdthumbSpin = cdThumb.animate([
+            { transform: 'rotate(360deg)'}
+        ], {
+            duration: 10000,
+            iterations: Infinity
+        })
+        cdthumbSpin.pause()
     },
 
     loadCurrentSong: function() {
-
       heading.textContent = this.currentSong.name
       cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
       audio.src = this.currentSong.path
