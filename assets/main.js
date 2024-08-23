@@ -7,6 +7,9 @@ const cd = $('.cd')
 const btnPlay = $('.btn-toggle-play')
 const player = $('.player')
 const progress = $('#progress')
+const nextBtn = $('.btn-next')
+const prevBtn = $('.btn-prev')
+
 
 
 const app = {
@@ -95,7 +98,7 @@ const app = {
         const _this = this;
         const cdWidth = cd.offsetWidth
 
-        // zoom in - zoom out IMG
+        // zoom in - zoom out CD
         document.onscroll = function() {
             const scrollTop = window.scrollY || document.documentElement.scrollTop
             const newCdWidth = cdWidth - scrollTop
@@ -140,12 +143,46 @@ const app = {
             iterations: Infinity
         })
         cdthumbSpin.pause()
+
+        // next song
+        nextBtn.onclick = function() {
+            _this.nextSong();
+            audio.play(); // Tự động phát bài hát mới
+            player.classList.add('playing'); // Thêm class "playing" để CD quay
+            _this.isPlaying = true; // Cập nhật trạng thái isPlaying
+            cdthumbSpin.play(); // Bắt đầu quay CD
+        }
+
+        // prev song
+        prevBtn.onclick = function() {
+            _this.prevSong();
+            audio.play(); // Tự động phát bài hát mới
+            player.classList.add('playing'); // Thêm class "playing" để CD quay
+            _this.isPlaying = true; // Cập nhật trạng thái isPlaying
+            cdthumbSpin.play(); // Bắt đầu quay CD
+        }
     },
 
     loadCurrentSong: function() {
       heading.textContent = this.currentSong.name
       cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
       audio.src = this.currentSong.path
+    },
+
+    nextSong: function() {
+        this.currentIndex++
+        if (this.currentIndex >= this.songs.length) {
+            this.currentIndex = 0
+        }
+        this.loadCurrentSong()
+    },
+
+    prevSong: function() {
+        this.currentIndex++
+        if (this.currentIndex < 0) {
+            this.currentIndex = this.songs.length - 1
+        }
+        this.loadCurrentSong()
     },
 
     start: function() {
