@@ -9,12 +9,13 @@ const player = $('.player')
 const progress = $('#progress')
 const nextBtn = $('.btn-next')
 const prevBtn = $('.btn-prev')
-
+const randomBtn = $('.btn-random')
 
 
 const app = {
   currentIndex: 0,
   isPlaying: false,
+  isRandom: false,
     songs : [
         {
             name: 'Xin đừng lặng im',
@@ -125,8 +126,11 @@ const app = {
         // song progress
         audio.ontimeupdate = function() {
             if (audio.duration) {
-                const durationPercent = Math.floor(audio.currentTime / audio.duration * 100)
-                progress.value = durationPercent
+                const progressPercent = Math.floor(audio.currentTime / audio.duration * 100);
+                progress.value = progressPercent;
+        
+                // Cập nhật màu chạy theo sau
+                progress.style.background = `linear-gradient(to right, var(--primary-color) ${progressPercent}%, #d3d3d3 ${progressPercent}%)`;
             }
         }
 
@@ -161,6 +165,12 @@ const app = {
             _this.isPlaying = true; // Cập nhật trạng thái isPlaying
             cdthumbSpin.play(); // Bắt đầu quay CD
         }
+
+        // random song
+        randomBtn.onclick = function(e) {
+            _this.isRandom = !_this.isRandom
+           randomBtn.classList.toggle('active',_this.isRandom) 
+        }
     },
 
     loadCurrentSong: function() {
@@ -178,11 +188,15 @@ const app = {
     },
 
     prevSong: function() {
-        this.currentIndex++
+        this.currentIndex--
         if (this.currentIndex < 0) {
             this.currentIndex = this.songs.length - 1
         }
         this.loadCurrentSong()
+    },
+
+    randomPlaySong: function() {
+
     },
 
     start: function() {
