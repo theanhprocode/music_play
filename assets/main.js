@@ -150,7 +150,11 @@ const app = {
 
         // next song
         nextBtn.onclick = function() {
-            _this.nextSong();
+            if (_this.isRandom) {
+                _this.randomPlaySong()
+            } else {
+                _this.nextSong()
+            }
             audio.play(); // Tự động phát bài hát mới
             player.classList.add('playing'); // Thêm class "playing" để CD quay
             _this.isPlaying = true; // Cập nhật trạng thái isPlaying
@@ -159,6 +163,11 @@ const app = {
 
         // prev song
         prevBtn.onclick = function() {
+            if (_this.isRandom) {
+                _this.randomPlaySong()
+            } else {
+                _this.prevSong()
+            }
             _this.prevSong();
             audio.play(); // Tự động phát bài hát mới
             player.classList.add('playing'); // Thêm class "playing" để CD quay
@@ -196,7 +205,13 @@ const app = {
     },
 
     randomPlaySong: function() {
+        let newIndex
+        do {
+            newIndex = Math.floor(Math.random() * this.songs.length)
+        } while (newIndex === this.currentIndex)
 
+        this.currentIndex = newIndex
+        this.loadCurrentSong()
     },
 
     start: function() {
