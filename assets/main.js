@@ -1,16 +1,16 @@
-const $ = document.querySelector.bind(document)
-const $$ = document.querySelectorAll.bind(document)
-const heading = $('header h2')
-const cdThumb = $('.cd-thumb')
-const audio = $('#audio')
-const cd = $('.cd')
-const btnPlay = $('.btn-toggle-play')
-const player = $('.player')
-const progress = $('#progress')
-const nextBtn = $('.btn-next')
-const prevBtn = $('.btn-prev')
-const randomBtn = $('.btn-random')
-const repeatBtn = $('.btn-repeat')
+const $ = document.querySelector.bind(document);
+const $$ = document.querySelectorAll.bind(document);
+const heading = $('header h2');
+const cdThumb = $('.cd-thumb');
+const audio = $('#audio');
+const cd = $('.cd');
+const btnPlay = $('.btn-toggle-play');
+const player = $('.player');
+const progress = $('#progress');
+const nextBtn = $('.btn-next');
+const prevBtn = $('.btn-prev');
+const randomBtn = $('.btn-random');
+const repeatBtn = $('.btn-repeat');
 
 const app = {
   currentIndex: 0,
@@ -67,7 +67,7 @@ const app = {
   render() {
     const htmls = this.songs.map((song, index) => {
       return `
-        <div class="song ${index === this.currentIndex ? 'active' : ''}">
+        <div class="song ${index === this.currentIndex ? 'active' : ''}" data-index="${index}">
           <div class="thumb" style="background-image: url('${song.image}')"></div>
           <div class="body">
             <h3 class="title">${song.name}</h3>
@@ -77,138 +77,157 @@ const app = {
             <i class="fas fa-ellipsis-h"></i>
           </div>
         </div>
-      `
-    })
-    $('.playlist').innerHTML = htmls.join('')
+      `;
+    });
+    $('.playlist').innerHTML = htmls.join('');
   },
 
-  defindPropertise() {
+  defineProperties() {
     Object.defineProperty(this, 'currentSong', {
       get: () => this.songs[this.currentIndex]
-    })
+    });
   },
 
   handleEvents() {
-    const cdWidth = cd.offsetWidth
+    const cdWidth = cd.offsetWidth;
 
     // Zoom in - zoom out CD
     document.onscroll = () => {
-      const scrollTop = window.scrollY || document.documentElement.scrollTop
-      const newCdWidth = cdWidth - scrollTop
-      cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0
-    }
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const newCdWidth = cdWidth - scrollTop;
+      cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0;
+    };
 
     // Play - pause
     btnPlay.onclick = () => {
       if (this.isPlaying) {
-        audio.pause()
-        player.classList.remove('playing')
-        this.isPlaying = false
-        cdthumbSpin.pause()
+        audio.pause();
+        player.classList.remove('playing');
+        this.isPlaying = false;
       } else {
-        audio.play()
-        player.classList.add('playing')
-        this.isPlaying = true
-        cdthumbSpin.play()
+        audio.play();
+        player.classList.add('playing');
+        this.isPlaying = true;
       }
-    }
+    };
 
     // Song progress
     audio.ontimeupdate = () => {
       if (audio.duration) {
-        const progressPercent = Math.floor(audio.currentTime / audio.duration * 100)
-        progress.value = progressPercent
-        progress.style.background = `linear-gradient(to right, var(--primary-color) ${progressPercent}%, #d3d3d3 ${progressPercent}%)`
+        const progressPercent = Math.floor(audio.currentTime / audio.duration * 100);
+        progress.value = progressPercent;
+        progress.style.background = `linear-gradient(to right, var(--primary-color) ${progressPercent}%, #d3d3d3 ${progressPercent}%)`;
       }
-    }
+    };
 
     // Rewind song
     progress.onchange = (e) => {
-      audio.currentTime = audio.duration / 100 * e.target.value
-    }
+      audio.currentTime = (audio.duration / 100) * e.target.value;
+    };
 
     // CD spin - stop
-    const cdthumbSpin = cdThumb.animate([
-      { transform: 'rotate(360deg)' }
-    ], {
-      duration: 20000,
-      iterations: Infinity
-    })
-    cdthumbSpin.pause()
+    const cdthumbSpin = cdThumb.animate(
+      [{ transform: 'rotate(360deg)' }],
+      {
+        duration: 20000,
+        iterations: Infinity,
+      }
+    );
+    cdthumbSpin.pause();
 
     // Next song
     nextBtn.onclick = () => {
       if (this.isRandom) {
-        this.randomPlaySong()
+        this.randomPlaySong();
       } else {
-        this.nextSong()
+        this.nextSong();
       }
-      audio.play()
-      this.render()
-      player.classList.add('playing')
-      this.isPlaying = true
-      cdthumbSpin.play()
-    }
+      audio.play();
+      this.render();
+      this.handleSongClick(); // Gọi lại để gán sự kiện click sau khi render
+      player.classList.add('playing');
+      this.isPlaying = true;
+    };
 
     // Prev song
     prevBtn.onclick = () => {
       if (this.isRandom) {
-        this.randomPlaySong()
+        this.randomPlaySong();
       } else {
-        this.prevSong()
+        this.prevSong();
       }
-      audio.play()
-      this.render()
-      player.classList.add('playing')
-      this.isPlaying = true
-      cdthumbSpin.play()
-    }
+      audio.play();
+      this.render();
+      this.handleSongClick(); // Gọi lại để gán sự kiện click sau khi render
+      player.classList.add('playing');
+      this.isPlaying = true;
+    };
 
     // Random song
     randomBtn.onclick = () => {
-      this.isRandom = !this.isRandom
-      randomBtn.classList.toggle('active', this.isRandom)
-    }
+      this.isRandom = !this.isRandom;
+      randomBtn.classList.toggle('active', this.isRandom);
+    };
 
     // Repeat song
     repeatBtn.onclick = () => {
-      this.isRepeat = !this.isRepeat
-      repeatBtn.classList.toggle('active', this.isRepeat)
-    }
+      this.isRepeat = !this.isRepeat;
+      repeatBtn.classList.toggle('active', this.isRepeat);
+    };
 
     // Next or repeat when ended
     audio.onended = () => {
       if (this.isRepeat) {
-        audio.play()
+        audio.play();
       } else {
-        nextBtn.click()
+        nextBtn.click();
       }
-    }
+    };
+
+    // click songs
+    this.handleSongClick(); 
+  },
+
+  handleSongClick() {
+    const _this = this;
+    const songElements = $$('.song');
+    songElements.forEach(songElement => {
+      songElement.onclick = function() {
+        const index = Number(songElement.getAttribute('data-index'));
+        _this.currentIndex = index;
+        _this.loadCurrentSong();
+        _this.render(); 
+        _this.handleSongClick(); 
+        audio.play();
+        player.classList.add('playing');
+        _this.isPlaying = true;
+      };
+    });
   },
 
   loadCurrentSong() {
-    heading.textContent = this.currentSong.name
-    cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
-    audio.src = this.currentSong.path
+    heading.textContent = this.currentSong.name;
+    cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
+    audio.src = this.currentSong.path;
   },
 
   nextSong() {
-    this.currentIndex++
+    this.currentIndex++;
     if (this.currentIndex >= this.songs.length) {
-      this.currentIndex = 0
+      this.currentIndex = 0;
     }
-    this.loadCurrentSong()
+    this.loadCurrentSong();
   },
 
   prevSong() {
-    this.currentIndex--
+    this.currentIndex--;
     if (this.currentIndex < 0) {
-      this.currentIndex = this.songs.length - 1
+      this.currentIndex = this.songs.length - 1;
     }
-    this.loadCurrentSong()
+    this.loadCurrentSong();
   },
 
-  randomPlaySong: function() {
+  randomPlaySong() {
     let newIndex;
 
     // Kiểm tra nếu tất cả các bài hát đã được phát
@@ -229,11 +248,11 @@ const app = {
   },
 
   start() {
-    this.render()
-    this.defindPropertise()
-    this.handleEvents()
-    this.loadCurrentSong()
+    this.render();
+    this.defineProperties();
+    this.handleEvents();
+    this.loadCurrentSong();
   }
-}
+};
 
-app.start()
+app.start();
