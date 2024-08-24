@@ -129,7 +129,6 @@ const app = {
                 const progressPercent = Math.floor(audio.currentTime / audio.duration * 100);
                 progress.value = progressPercent;
         
-                // Cập nhật màu chạy theo sau
                 progress.style.background = `linear-gradient(to right, var(--primary-color) ${progressPercent}%, #d3d3d3 ${progressPercent}%)`;
             }
         }
@@ -168,7 +167,6 @@ const app = {
             } else {
                 _this.prevSong()
             }
-            _this.prevSong();
             audio.play(); // Tự động phát bài hát mới
             player.classList.add('playing'); // Thêm class "playing" để CD quay
             _this.isPlaying = true; // Cập nhật trạng thái isPlaying
