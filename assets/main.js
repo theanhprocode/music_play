@@ -62,6 +62,18 @@ const app = {
       path: './assets/music/song7.mp3',
       image: './assets/img/song7.jpg'
     },
+    {
+        name: 'Chúng ta của tương lai',
+        singer: 'Sơn Tùng MTP',
+        path: './assets/music/song8.mp3',
+        image: './assets/img/song8.jpg'
+      },
+      {
+        name: 'Yêu người có ước mơ',
+        singer: 'Bùi Trường Linh',
+        path: './assets/music/song9.mp3',
+        image: './assets/img/song9.jpg'
+      },
   ],
 
   render() {
